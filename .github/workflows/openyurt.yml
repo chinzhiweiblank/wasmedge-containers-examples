@@ -30,12 +30,7 @@ jobs:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: ${{ runner.os }}-go-
-
-    - name: Install Required Commands
-      run: |
-        go get sigs.k8s.io/kind
-        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl && sudo install kubectl /usr/local/bin/kubectl
-        
+  
     - name: Install apt-get packages
       run: |
         sudo ACCEPT_EULA=Y apt-get update
@@ -48,8 +43,7 @@ jobs:
         
     - name: Install OpenYurt
       run: |
-        git clone https://github.com/openyurtio/openyurt
-        cd openyurt && bash hack/local_up_openyurt.sh
+        bash openyurt/hack.sh
   
     - name: Run demo in containerd
       run: |
