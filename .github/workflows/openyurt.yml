@@ -1,0 +1,55 @@
+name: Containerd test
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'info'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  
+    - uses: actions/setup-go@v2
+      with:
+        go-version: ${{ env.GO_VERSION }}
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: ${{ runner.os }}-go-
+  
+    - name: Install apt-get packages
+      run: |
+        sudo ACCEPT_EULA=Y apt-get update
+        sudo ACCEPT_EULA=Y apt-get upgrade
+        sudo ACCEPT_EULA=Y apt-get install git wget
+              
+    - name: Install Required Commands
+      run: |
+        go get sigs.k8s.io/kind@v0.11.1
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl && sudo install kubectl /usr/local/bin/kubectl
+
+    - name: Install containerd and crun
+      run: |
+        wget -qO- https://raw.githubusercontent.com/second-state/wasmedge-containers-examples/main/containerd/install.sh | bash
+        
+    - Name: Install OpenYurt
+      run: |
+        sudo ./openyurt/local_up_openyurt.sh
+  
+    - name: Run demo in containerd
+      run: |
+        sudo kubectl run -it --rm --restart=Never wasi-demo --image=hydai/wasm-wasi-example:with-wasm-annotation  --overrides='{"kind":"Pod","metadata":{"annotations":{"module.wasm.image/variant":"compat"}} , "apiVersion":"v1", "spec": {"hostNetwork": true}}' /wasi_example_main.wasm 50000000
+
