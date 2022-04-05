@@ -1,4 +1,4 @@
-name: Containerd test
+name: OpenYurt test
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
       run: |
         wget -qO- https://raw.githubusercontent.com/second-state/wasmedge-containers-examples/main/containerd/install.sh | bash
         
-    - Name: Install OpenYurt
+    - name: Install OpenYurt
       run: |
         sudo ./openyurt/local_up_openyurt.sh
   
