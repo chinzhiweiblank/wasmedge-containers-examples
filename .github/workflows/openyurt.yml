@@ -49,7 +49,7 @@ jobs:
     - name: Install OpenYurt
       run: |
         git clone https://github.com/openyurtio/openyurt
-        cd openyurt && bash openyurt/hack/local_up_openyurt.sh
+        cd openyurt && bash hack/local_up_openyurt.sh
   
     - name: Run demo in containerd
       run: |
