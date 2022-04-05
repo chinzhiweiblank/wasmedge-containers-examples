@@ -48,7 +48,7 @@ jobs:
         
     - name: Install OpenYurt
       run: |
-        wget -q0- https://raw.githubusercontent.com/openyurtio/openyurt/master/hack/local_up_openyurt.sh | bash
+        wget -qO- https://raw.githubusercontent.com/openyurtio/openyurt/master/hack/local_up_openyurt.sh | bash
   
     - name: Run demo in containerd
       run: |
